@@ -96,7 +96,7 @@ Here are some example predictions:
 
 ![Prediction Image](predection.jpg)
 
-![Acurracy of my model](predection.jpg)
+![Acurracy of my model](modelacuuracy.png)
 
 ## Troubleshooting
 
