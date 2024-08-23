@@ -1,0 +1,120 @@
+To test the model on your Windows system before deploying it to a Raspberry Pi, you can follow these steps:
+
+1. **Set Up the Environment**: Ensure that you have the necessary Python libraries installed.
+2. **Load the TensorFlow Lite Model**: Use TensorFlow Lite to run inference on the model.
+3. **Capture and Process Images**: Use OpenCV to capture images and make predictions.
+
+Here’s a step-by-step guide and Python script to test the model on your Windows system:
+
+### 1. Set Up the Environment
+
+Ensure you have Python and the required libraries installed:
+
+```bash
+pip install tensorflow tflite-runtime opencv-python
+```
+
+### 2. Save the TensorFlow Lite Model
+
+If you haven't already saved the TensorFlow Lite model, convert and save it as follows (assuming you have a Keras model):
+
+```python
+import tensorflow as tf
+
+# Load your trained Keras model
+model = tf.keras.models.load_model('cloth_classifier_model.h5')
+
+# Convert the model to TensorFlow Lite format
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+
+# Save the TensorFlow Lite model
+with open('cloth_classifier_model.tflite', 'wb') as f:
+    f.write(tflite_model)
+```
+
+### 3. Create a Python Script for Inference
+
+Create a Python script to load the TensorFlow Lite model and perform inference using OpenCV to capture images from your webcam.
+
+```python
+import cv2
+import numpy as np
+import tensorflow as tf
+
+# Load the TensorFlow Lite model
+interpreter = tf.lite.Interpreter(model_path='cloth_classifier_model.tflite')
+interpreter.allocate_tensors()
+
+# Get input and output tensors
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
+# Function to preprocess the image
+def preprocess_image(image):
+    image = cv2.resize(image, (150, 150))  # Resize image to match model input
+    image = image.astype(np.float32)       # Convert image to float32
+    image /= 255.0                         # Normalize pixel values
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    return image
+
+# Initialize the camera
+camera = cv2.VideoCapture(0)  # Use default camera
+
+while True:
+    ret, frame = camera.read()
+    if not ret:
+        break
+
+    # Preprocess the image
+    input_data = preprocess_image(frame)
+
+    # Set the tensor to the input data
+    interpreter.set_tensor(input_details[0]['index'], input_data)
+
+    # Run inference
+    interpreter.invoke()
+
+    # Get the results
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+    prediction = np.argmax(output_data[0])
+
+    # Convert prediction to class label
+    class_labels = ['handloom', 'normal_or_powerloom']  # Update based on your class labels
+    predicted_class = class_labels[prediction]
+
+    # Display the result
+    cv2.putText(frame, f'Prediction: {predicted_class}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv2.imshow('Camera', frame)
+
+    # Exit condition
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Cleanup
+camera.release()
+cv2.destroyAllWindows()
+```
+
+### 4. Run the Script
+
+1. Save the above script as `predict.py`.
+2. Open a terminal or command prompt.
+3. Navigate to the directory where `predict.py` is saved.
+4. Run the script:
+
+   ```bash
+   python predict.py
+   ```
+
+### 5. Testing and Verification
+
+- **Ensure the Camera is Working**: Make sure your webcam is connected and functioning.
+- **Verify Predictions**: The script should display a window showing the camera feed with predictions overlaid. Press 'q' to exit the script.
+
+### Notes
+
+- **Model Path**: Ensure the path to `cloth_classifier_model.tflite` in the script matches where you saved the TensorFlow Lite model.
+- **Class Labels**: Adjust the `class_labels` list to match the labels used during training.
+
+This setup allows you to test and verify your model on your Windows system before deploying it to a Raspberry Pi. Once you’re satisfied with the results, you can follow the steps mentioned earlier to deploy the model on a Raspberry Pi.
