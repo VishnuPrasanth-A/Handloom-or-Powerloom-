@@ -96,6 +96,8 @@ Here are some example predictions:
 
 ![Prediction Image](predection.jpg)
 
+![Acurracy of my model](predection.jpg)
+
 ## Troubleshooting
 
 - **Camera Issues**: Ensure the webcam is properly connected and accessible.
