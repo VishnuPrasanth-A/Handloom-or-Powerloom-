@@ -1,7 +1,3 @@
-Certainly! Here is a detailed README.md file for your project. This README will guide users through setting up the project, running it, and understanding its components.
-
----
-
 # Cloth Classification with TensorFlow Lite
 
 ## Overview
