@@ -90,81 +90,11 @@ To add the accuracy plot to your project:
 2. **Upload Plots**: Upload these plot images to your project repository.
 3. **Include in README**: Reference these images in your README for visual performance evaluation.
 
-Example:
-
-```markdown
-## Model Performance
-
-### Training and Validation Accuracy & Validation Loss
-
-![Accuracy Plot](modelacuuracy.png)
-
-### Prediction Images
-
-To capture and display prediction images:
-
-1. **Capture Predictions**: Modify `predict.py` to save prediction frames as images. For example:
-
-    ```python
-    import cv2
-    import numpy as np
-    import tensorflow as tf
-
-    # Load the TensorFlow Lite model
-    interpreter = tf.lite.Interpreter(model_path='cloth_classifier_model.tflite')
-    interpreter.allocate_tensors()
-
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    def preprocess_image(image):
-        image = cv2.resize(image, (150, 150))
-        image = image.astype(np.float32)
-        image /= 255.0
-        image = np.expand_dims(image, axis=0)
-        return image
-
-    camera = cv2.VideoCapture(0)
-
-    while True:
-        ret, frame = camera.read()
-        if not ret:
-            break
-
-        input_data = preprocess_image(frame)
-        interpreter.set_tensor(input_details[0]['index'], input_data)
-        interpreter.invoke()
-
-        output_data = interpreter.get_tensor(output_details[0]['index'])
-        prediction = np.argmax(output_data[0])
-        class_labels = ['handloom', 'normal_or_powerloom']
-        predicted_class = class_labels[prediction]
-
-        cv2.putText(frame, f'Prediction: {predicted_class}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.imshow('Prediction Window', frame)
-
-        # Save prediction frame
-        cv2.imwrite('prediction_image.png', frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    camera.release()
-    cv2.destroyAllWindows()
-    ```
-
-2. **Upload Prediction Images**: Upload these images to your repository.
-3. **Include in README**: Reference these images for showcasing predictions.
-
-Example:
-
-```markdown
 ## Prediction Examples
 
 Here are some example predictions:
 
 ![Prediction Image](predection.jpg)
-```
 
 ## Troubleshooting
 
@@ -183,7 +113,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or issues, please contact [your-email@example.com](mailto:your-email@example.com).
+For any questions or issues, please contact [your-email@example.com](mailto:your-vishnuprasanth.a.agri44@gmail.com).
 
 ---
 
