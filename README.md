@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project demonstrates how to classify cloth types into 'handloom' or 'normal_or_powerloom' using a Convolutional Neural Network (CNN) model trained in TensorFlow and converted to TensorFlow Lite for efficient inference. The application captures images using a webcam, processes them, and predicts the cloth type in real-time.
+This project classifies cloth types into 'handloom' or 'normal_or_powerloom' using a Convolutional Neural Network (CNN) model trained with TensorFlow and converted to TensorFlow Lite for efficient inference. The application captures images using a webcam, processes them, and predicts the cloth type in real-time.
 
 ## Project Structure
 
@@ -11,10 +11,11 @@ This project demonstrates how to classify cloth types into 'handloom' or 'normal
 - `cloth_classifier_model.h5`: Trained Keras model (saved model file).
 - `cloth_classifier_model.tflite`: TensorFlow Lite model (converted model file).
 
+
 ## Prerequisites
 
-1. **Python**: Make sure you have Python 3.x installed.
-2. **Required Libraries**: Install the required Python libraries using the following command:
+1. **Python**: Ensure Python 3.x is installed.
+2. **Required Libraries**: Install the required Python libraries:
 
     ```bash
     pip install tensorflow tflite-runtime opencv-python
@@ -34,19 +35,22 @@ This project demonstrates how to classify cloth types into 'handloom' or 'normal
         └── normal_or_powerloom/
     ```
 
-## Model Training
+## How to Use
 
 ### 1. Training the Model
 
-Run the `model_training.py` script to train the CNN model and save it. This script sets up data augmentation, trains the model, evaluates it, and saves the final model.
+Run the `model_training.py` script to train the CNN model and save it. This script will also generate accuracy and loss plots.
 
 ```bash
 python model_training.py
 ```
 
+- **Training**: The script will train the model and save it as `cloth_classifier_model.h5`.
+- **Plots**: Accuracy and loss plots will be saved as `accuracy_plot.png` and `loss_plot.png`, respectively.
+
 ### 2. Converting the Model to TensorFlow Lite
 
-If not already done, convert the Keras model to TensorFlow Lite format:
+Convert the Keras model to TensorFlow Lite format:
 
 ```python
 import tensorflow as tf
@@ -63,42 +67,109 @@ with open('cloth_classifier_model.tflite', 'wb') as f:
     f.write(tflite_model)
 ```
 
-## Running Inference
+### 3. Running the Prediction Script
 
-### 1. Setting Up
+Ensure your webcam is connected and the TensorFlow Lite model (`cloth_classifier_model.tflite`) is in the same directory as the `predict.py` script.
 
-Ensure you have a working webcam and the TensorFlow Lite model (`cloth_classifier_model.tflite`) is in the same directory as the `predict.py` script.
-
-### 2. Running the Prediction Script
-
-Run the `predict.py` script to start the real-time classification:
+Run the `predict.py` script to start real-time classification:
 
 ```bash
 python predict.py
 ```
 
-The script will open a window showing the live feed from the webcam with predictions displayed. Press 'q' to exit the script.
+- **Display**: The script will open a window showing the live feed from the webcam with predictions overlaid.
+- **Exit**: Press 'q' to exit the script.
 
-## Code Explanation
+## Adding and Displaying Accuracy and Prediction Images
 
-### Model Training (`model_training.py`)
+### Accuracy Plot
 
-- **Data Preparation**: Uses `ImageDataGenerator` to augment training data and preprocess images.
-- **Model Architecture**: Defines a CNN with three convolutional layers followed by dense layers.
-- **Training**: Compiles and fits the model with early stopping and checkpoint callbacks.
-- **Evaluation**: Evaluates the model on the test set and plots training/validation accuracy and loss.
+To add the accuracy plot to your project:
 
-### Inference (`predict.py`)
+1. **Generate Plots**: Ensure `model_training.py` generates the `modelacuuracy.png`
+2. **Upload Plots**: Upload these plot images to your project repository.
+3. **Include in README**: Reference these images in your README for visual performance evaluation.
 
-- **Model Loading**: Loads the TensorFlow Lite model and sets up the interpreter.
-- **Image Preprocessing**: Resizes, normalizes, and prepares images for model input.
-- **Inference**: Runs the model on the captured image and displays the predicted class.
-- **Webcam Integration**: Captures real-time video feed and overlays predictions.
+Example:
+
+```markdown
+## Model Performance
+
+### Training and Validation Accuracy & Validation Loss
+
+![Accuracy Plot](modelacuuracy.png)
+
+### Prediction Images
+
+To capture and display prediction images:
+
+1. **Capture Predictions**: Modify `predict.py` to save prediction frames as images. For example:
+
+    ```python
+    import cv2
+    import numpy as np
+    import tensorflow as tf
+
+    # Load the TensorFlow Lite model
+    interpreter = tf.lite.Interpreter(model_path='cloth_classifier_model.tflite')
+    interpreter.allocate_tensors()
+
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+
+    def preprocess_image(image):
+        image = cv2.resize(image, (150, 150))
+        image = image.astype(np.float32)
+        image /= 255.0
+        image = np.expand_dims(image, axis=0)
+        return image
+
+    camera = cv2.VideoCapture(0)
+
+    while True:
+        ret, frame = camera.read()
+        if not ret:
+            break
+
+        input_data = preprocess_image(frame)
+        interpreter.set_tensor(input_details[0]['index'], input_data)
+        interpreter.invoke()
+
+        output_data = interpreter.get_tensor(output_details[0]['index'])
+        prediction = np.argmax(output_data[0])
+        class_labels = ['handloom', 'normal_or_powerloom']
+        predicted_class = class_labels[prediction]
+
+        cv2.putText(frame, f'Prediction: {predicted_class}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.imshow('Prediction Window', frame)
+
+        # Save prediction frame
+        cv2.imwrite('prediction_image.png', frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    camera.release()
+    cv2.destroyAllWindows()
+    ```
+
+2. **Upload Prediction Images**: Upload these images to your repository.
+3. **Include in README**: Reference these images for showcasing predictions.
+
+Example:
+
+```markdown
+## Prediction Examples
+
+Here are some example predictions:
+
+![Prediction Image](predection.jpg)
+```
 
 ## Troubleshooting
 
 - **Camera Issues**: Ensure the webcam is properly connected and accessible.
-- **Model Errors**: Verify that the TensorFlow Lite model path is correct.
+- **Model Errors**: Verify the TensorFlow Lite model path is correct.
 - **Library Errors**: Check that all required libraries are installed and updated.
 
 ## License
@@ -112,8 +183,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or issues, please contact [your-email@example.com](mailto:your-vishnuprasanth.a.agri44@gmail.com).
+For any questions or issues, please contact [your-email@example.com](mailto:your-email@example.com).
 
 ---
 
-Feel free to customize the README file according to your specific project details and any additional instructions you may have.
+Feel free to adjust any sections according to your project's specifics and any additional details you may want to include.
