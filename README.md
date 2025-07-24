@@ -1,5 +1,14 @@
 # Cloth Classification with TensorFlow Lite
 
+![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00.svg)
+![OpenCV](https://img.shields.io/badge/OpenCV-RealTime-green)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Model Type](https://img.shields.io/badge/Model-CNN-blueviolet)
+![Deployment](https://img.shields.io/badge/Deployment-TensorFlow_Lite-yellow)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen) 
+
 ## Overview
 
 This project classifies cloth types into 'handloom' or 'normal_or_powerloom' using a Convolutional Neural Network (CNN) model trained with TensorFlow and converted to TensorFlow Lite for efficient inference. The application captures images using a webcam, processes them, and predicts the cloth type in real-time.
@@ -115,7 +124,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or issues, please contact [mailto:vishnuprasanth.a.agri44@gmail.com]
+For any questions or issues, please contact mailto:vishnuprasanth.a.agri44@gmail.com
 
 ---
 
