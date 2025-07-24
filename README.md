@@ -115,7 +115,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or issues, please contact [your-email@example.com](mailto:your-vishnuprasanth.a.agri44@gmail.com).
+For any questions or issues, please contact [mailto:vishnuprasanth.a.agri44@gmail.com]
 
 ---
 
